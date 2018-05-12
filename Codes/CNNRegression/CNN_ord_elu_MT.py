@@ -235,7 +235,7 @@ class Tokenizer1(object):
 # In[8]:
 
 import os, numpy as np, pickle
-os.chdir("/home/shivashankar/UKPetitions/")
+os.chdir("Petitions/") #Path to petitions
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "4"
 os.environ['MKL_NUM_THREADS'] = '4'
@@ -248,6 +248,9 @@ with open(modelname, 'rb') as handle:
 
 
 import pandas as pd
+
+#Petitions are sorted by date
+
 petitions = pd.read_csv("USPetitions_7K.csv", header=0)
 redpet = petitions[petitions['signs']<>'null']
 redpet['signs'] = redpet['signs'].astype('int')
@@ -264,6 +267,8 @@ testpetitions['fulltext'] = testpetitions['title'].astype('str')+' '+testpetitio
 from nltk import word_tokenize, sent_tokenize
 
 import math
+
+#encoding will change for UK, as there are 2 more classes (10, 100)
 
 def getsegment(val):
     if math.log(val) > math.log(100000):
@@ -300,7 +305,7 @@ def gettraining(trainleft, tokenizer):
 import pandas as pd, numpy as np
 from nltk.tokenize import sent_tokenize, word_tokenize
 
-train = pd.read_csv("UKPetitions.csv", header=0, delimiter=",")
+train = pd.read_csv("USPetitions_7K.csv", header=0, delimiter=",")
 train['text']  = train['text'].str.lower()
 train['text'] = train['text'].str.replace('http\S+|www.\S+', '', case=False)
 train['text'] = train['text'].str.replace('-|\.|,|;|:', ' ', case=False)
@@ -375,6 +380,7 @@ def getlabels(labels, x):
         vlabels.append(i[x])
     return vlabels
 
+# This is binary classification for US petitions, must be 3-class for UK petitions
 def evaluate(cnnmodel, tedata, ctest, testo_labels):
     from sklearn.metrics import f1_score
     rpred = np.array(cnnmodel.predict([tedata, ctest], batch_size=128, verbose=0)[0])
