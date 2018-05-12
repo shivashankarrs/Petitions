@@ -1,6 +1,6 @@
 # Petitions
 
-Dataset and codes are from our paper: Shivashankar Subramanian, Timothy Baldwin and Trevor Cohn. Content-based Popularity Prediction of Online Petitions Using a Deep Regression Model, In Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (*ACL 2018*), Melbourne, Australia.
+Dataset and codes are from our paper: Shivashankar Subramanian, Timothy Baldwin and Trevor Cohn. Content-based Popularity Prediction of Online Petitions Using a Deep Regression Model, In Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (**ACL 2018**), Melbourne, Australia.
 
 We use petitions from UK government (https://petition.parliament.uk/archived/petitions?state=published) and US government websites (http://reshare.ukdataservice.ac.uk/851634/).
 
