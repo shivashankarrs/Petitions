@@ -10,4 +10,4 @@ https://petitions.whitehouse.gov/petition/start-proceedings-charge-darrell-issa-
 
 But all the previous petitions have been removed from the current site; so once again the URL will need to be re-written to use the archive, e.g., https://petitions.obamawhitehouse.archives.gov/petition/start-proceedings-charge-darrell-issa-ethics-violations-and-remove-him-congress
 
-
+Codes directory has the codes. Codes/Resources has dependent files. Codes/CustomFeatures has notebooks to generate hand-engineered features. Codes/CNNRegression has CNN regression code, written on Keras/TensorFlow.
