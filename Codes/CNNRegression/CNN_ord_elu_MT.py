@@ -487,28 +487,28 @@ def cnnmodel(x_train, c_train, y_train, x_val, c_val, y_val, tokenizer, o_train,
     for i in range(iterations):
         big_model.fit([x_train, c_train], [y_train, label1, label2, label3], batch_size=32, epochs=1, validation_data=([x_val, c_val], [y_val, vlabel1, vlabel2, vlabel3]))
 
-	pred = np.array(big_model.predict([tedata, ctest], batch_size=128, verbose=0)[0])
+    pred = np.array(big_model.predict([tedata, ctest], batch_size=128, verbose=0)[0])
 
-	import keras, math
-	y_classes = []
-	for v, i in enumerate(pred):
-    	    if i>0:
-            	y_classes.append(math.log(i))
-	    else:
-        	y_classes.append(0)
+    import keras, math
+    y_classes = []
+    for v, i in enumerate(pred):
+    	if i>0:
+            y_classes.append(math.log(i))
+	else:
+            y_classes.append(0)
 
 
-	from sklearn.metrics import mean_squared_error, mean_absolute_error
-	from scipy.stats import pearsonr
-	cumerr = []
-	true_classes = []
-	for v, i in enumerate(testpetitions['signs']):
-            true_classes.append(math.log(i))
-            cumerr.append((math.fabs(y_classes[v]-math.log(i))*100.0)/(math.log(i)))
+    from sklearn.metrics import mean_squared_error, mean_absolute_error
+    from scipy.stats import pearsonr
+    cumerr = []
+    true_classes = []
+    for v, i in enumerate(testpetitions['signs']):
+    	true_classes.append(math.log(i))
+        cumerr.append((math.fabs(y_classes[v]-math.log(i))*100.0)/(math.log(i)))
 
-        print mean_absolute_error(np.array(true_classes), np.array(y_classes))
-        print "mape", np.average(np.array(cumerr))
-        print "macro 0/1",  evaluate(big_model, tedata, ctest, testo_labels)
+    print mean_absolute_error(np.array(true_classes), np.array(y_classes))
+    print "mape", np.average(np.array(cumerr))
+    print "macro 0/1",  evaluate(big_model, tedata, ctest, testo_labels)
     return big_model
 
 combmodel = cnnmodel(trdata, ctrain, train_labels, valdata, cval, val_labels, tokenizer, traino_labels, valo_labels, tedata, ctest, testo_labels)
