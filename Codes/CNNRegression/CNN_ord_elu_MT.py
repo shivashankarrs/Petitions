@@ -235,7 +235,7 @@ class Tokenizer1(object):
 # In[8]:
 
 import os, numpy as np, pickle
-os.chdir("/home/shivashankar/UKPetitions/")
+os.chdir("Petitions/") #Path to petitions
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "4"
 os.environ['MKL_NUM_THREADS'] = '4'
@@ -248,6 +248,9 @@ with open(modelname, 'rb') as handle:
 
 
 import pandas as pd
+
+#Petitions are sorted by date
+
 petitions = pd.read_csv("USPetitions_7K.csv", header=0)
 redpet = petitions[petitions['signs']<>'null']
 redpet['signs'] = redpet['signs'].astype('int')
@@ -264,6 +267,8 @@ testpetitions['fulltext'] = testpetitions['title'].astype('str')+' '+testpetitio
 from nltk import word_tokenize, sent_tokenize
 
 import math
+
+#encoding will change for UK, as there are 2 more classes (10, 100)
 
 def getsegment(val):
     if math.log(val) > math.log(100000):
@@ -300,7 +305,7 @@ def gettraining(trainleft, tokenizer):
 import pandas as pd, numpy as np
 from nltk.tokenize import sent_tokenize, word_tokenize
 
-train = pd.read_csv("UKPetitions.csv", header=0, delimiter=",")
+train = pd.read_csv("USPetitions_7K.csv", header=0, delimiter=",")
 train['text']  = train['text'].str.lower()
 train['text'] = train['text'].str.replace('http\S+|www.\S+', '', case=False)
 train['text'] = train['text'].str.replace('-|\.|,|;|:', ' ', case=False)
@@ -375,6 +380,7 @@ def getlabels(labels, x):
         vlabels.append(i[x])
     return vlabels
 
+# This is binary classification for US petitions, must be 3-class for UK petitions
 def evaluate(cnnmodel, tedata, ctest, testo_labels):
     from sklearn.metrics import f1_score
     rpred = np.array(cnnmodel.predict([tedata, ctest], batch_size=128, verbose=0)[0])
@@ -481,28 +487,28 @@ def cnnmodel(x_train, c_train, y_train, x_val, c_val, y_val, tokenizer, o_train,
     for i in range(iterations):
         big_model.fit([x_train, c_train], [y_train, label1, label2, label3], batch_size=32, epochs=1, validation_data=([x_val, c_val], [y_val, vlabel1, vlabel2, vlabel3]))
 
-	pred = np.array(big_model.predict([tedata, ctest], batch_size=128, verbose=0)[0])
+    pred = np.array(big_model.predict([tedata, ctest], batch_size=128, verbose=0)[0])
 
-	import keras, math
-	y_classes = []
-	for v, i in enumerate(pred):
-    	    if i>0:
-            	y_classes.append(math.log(i))
-	    else:
-        	y_classes.append(0)
+    import keras, math
+    y_classes = []
+    for v, i in enumerate(pred):
+    	if i>0:
+            y_classes.append(math.log(i))
+	else:
+            y_classes.append(0)
 
 
-	from sklearn.metrics import mean_squared_error, mean_absolute_error
-	from scipy.stats import pearsonr
-	cumerr = []
-	true_classes = []
-	for v, i in enumerate(testpetitions['signs']):
-            true_classes.append(math.log(i))
-            cumerr.append((math.fabs(y_classes[v]-math.log(i))*100.0)/(math.log(i)))
+    from sklearn.metrics import mean_squared_error, mean_absolute_error
+    from scipy.stats import pearsonr
+    cumerr = []
+    true_classes = []
+    for v, i in enumerate(testpetitions['signs']):
+    	true_classes.append(math.log(i))
+        cumerr.append((math.fabs(y_classes[v]-math.log(i))*100.0)/(math.log(i)))
 
-        print mean_absolute_error(np.array(true_classes), np.array(y_classes))
-        print "mape", np.average(np.array(cumerr))
-        print "macro 0/1",  evaluate(big_model, tedata, ctest, testo_labels)
+    print mean_absolute_error(np.array(true_classes), np.array(y_classes))
+    print "mape", np.average(np.array(cumerr))
+    print "macro 0/1",  evaluate(big_model, tedata, ctest, testo_labels)
     return big_model
 
 combmodel = cnnmodel(trdata, ctrain, train_labels, valdata, cval, val_labels, tokenizer, traino_labels, valo_labels, tedata, ctest, testo_labels)
