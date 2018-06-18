@@ -16,3 +16,9 @@ Codes directory has the codes.
 - Codes/Resources has dependent files. 
 - Codes/CustomFeatures has notebooks to generate hand-engineered features. 
 - Codes/CNNRegression has CNN regression code, written on Keras/TensorFlow.
+
+
+Dependencies:
+
+1. For obtaining embeddings with title text, we used https://github.com/facebookresearch/InferSent
+2. We use pickle created with reduced vocabulary from http://nlp.stanford.edu/data/glove.840B.300d.zip (glovered.pickle in the code)
