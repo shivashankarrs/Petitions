@@ -467,7 +467,7 @@ def cnnmodel(x_train, c_train, y_train, x_val, c_val, y_val, tokenizer, o_train,
     vlabel2 = np.array(getlabels(o_val,1))
     vlabel3 = np.array(getlabels(o_val,2))
 
-    sign = Dense(1, activation='linear')(cnnembedc)
+    sign = Dense(1, activation='elu')(cnnembedc)
 
     l1 = Dense(1, activation='sigmoid')(cnnembed)
     l2 = Dense(1, activation='sigmoid')(cnnembed)
