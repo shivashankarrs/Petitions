@@ -4,7 +4,7 @@
 import string
 import sys
 import numpy as np
-from keras.layers import Dense, Dropout, Embedding, LSTM, Bidirectional, Activation
+from keras.layers import Dense, Input, Flatten
 from keras.models import Sequential
 from keras.layers import Conv1D, MaxPooling1D, Embedding, AveragePooling1D, TimeDistributed, GlobalMaxPooling1D, Merge
 from keras.preprocessing.text import Tokenizer
@@ -181,8 +181,6 @@ def cnnmodel(x_train, c_train, y_train, x_val, c_val, y_val, tokenizer, o_train,
     
     EMBEDDING_DIM = 300
     HIDDEN_DIMS = 5
-
-    from keras.layers import Dense, Input, Flatten
 
     word_index = tokenizer.word_index
     nb_words = min(MAX_NB_WORDS, len(word_index))
