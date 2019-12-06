@@ -1,17 +1,15 @@
-
-# coding: utf-8
-
-import string
-import sys
 import numpy as np
 from keras.layers import Dense, Input, Flatten
 from keras.models import Sequential
 from keras.layers import Conv1D, MaxPooling1D, Embedding, AveragePooling1D, TimeDistributed, GlobalMaxPooling1D, Merge
 from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
 from keras.models import Model
 import pandas as pd
 import keras   
 import os, pickle
+from nltk import word_tokenize, sent_tokenize
+import math
 
 os.chdir("Petitions/") #Path to petitions
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -22,7 +20,7 @@ os.environ['OMP_NUM_THREADS'] = '4'
 
 modelname = "glovered.pickle"
 with open(modelname, 'rb') as handle:
-        embeddings = pickle.load(handle)
+	embeddings = pickle.load(handle)
 
 #Petitions are sorted by date
 petitions = pd.read_csv("USPetitions_7K.csv", header=0)
@@ -36,10 +34,6 @@ testpetitions = redpet.iloc[920:]
 trainpetitions['fulltext'] = trainpetitions['title'].astype('str')+' '+trainpetitions['content'].astype('str')
 valpetitions['fulltext'] = valpetitions['title'].astype('str')+' '+valpetitions['content'].astype('str')
 testpetitions['fulltext'] = testpetitions['title'].astype('str')+' '+testpetitions['content'].astype('str')
- 
-
-from nltk import word_tokenize, sent_tokenize
-import math
 
 #encoding will change for UK, as there are 2 more classes (10, 100)
 
@@ -68,8 +62,6 @@ testc_labels = testc_labels.reset_index()
 traino_labels = np.array(trainc_labels['signs'])
 valo_labels = np.array(valc_labels['signs'])
 testo_labels = np.array(testc_labels['signs'])
-
-from keras.preprocessing.sequence import pad_sequences
 
 def gettraining(trainleft, tokenizer):
     MAX_SEQUENCE_LENGTH = 90        
@@ -154,6 +146,7 @@ def getlabels(labels, x):
     return vlabels
 
 # This is binary classification for US petitions, must be 3-class for UK petitions
+
 def evaluate(cnnmodel, tedata, ctest, testo_labels):
     from sklearn.metrics import f1_score
     rpred = np.array(cnnmodel.predict([tedata, ctest], batch_size=128, verbose=0)[0])
@@ -170,9 +163,6 @@ def evaluate(cnnmodel, tedata, ctest, testo_labels):
     print len(testl), np.sum(np.array(testl)), "check"
 
     return f1_score(pred, testl,average='macro')
-
-import math
-from keras import backend as K
 
 def cnnmodel(x_train, c_train, y_train, x_val, c_val, y_val, tokenizer, o_train, o_val, tedata, ctest, testo_labels):
 
