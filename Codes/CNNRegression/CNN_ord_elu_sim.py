@@ -4,8 +4,6 @@
 import string
 import sys
 import numpy as np
-from six.moves import range
-from six.moves import zip
 from keras.layers import Dense, Dropout, Embedding, LSTM, Bidirectional, Activation
 from keras.models import Sequential
 from keras.layers import Conv1D, MaxPooling1D, Embedding, AveragePooling1D, TimeDistributed, GlobalMaxPooling1D, Merge
