@@ -6,6 +6,13 @@ import sys
 import numpy as np
 from six.moves import range
 from six.moves import zip
+from keras.layers import Dense, Dropout, Embedding, LSTM, Bidirectional, Activation
+from keras.models import Sequential
+from keras.layers import Conv1D, MaxPooling1D, Embedding, AveragePooling1D, TimeDistributed, GlobalMaxPooling1D, Merge
+from keras.preprocessing.text import Tokenizer
+from keras.models import Model
+import pandas as pd
+import keras   
 
 if sys.version_info < (3,):
     maketrans = string.maketrans
@@ -139,7 +146,7 @@ def gettokenizer(corpus):
         for k, sent in enumerate(mani):
             fulldata.append(sent)
     tot = np.array(fulldata)
-    tokenizer = Tokenizer1(nb_words=MAX_NB_WORDS)
+    tokenizer = Tokenizer(nb_words=MAX_NB_WORDS)
     tokenizer.fit_on_texts(tot)
     return tokenizer
 
@@ -216,14 +223,6 @@ import math
 from keras import backend as K
 
 def cnnmodel(x_train, c_train, y_train, x_val, c_val, y_val, tokenizer, o_train, o_val, tedata, ctest, testo_labels):
-
-    from keras.layers import Dense, Dropout, Embedding, LSTM, Bidirectional, Activation
-    from keras.models import Sequential
-    from keras.layers import Conv1D, MaxPooling1D, Embedding, AveragePooling1D, TimeDistributed, GlobalMaxPooling1D, Merge
-    from keras.preprocessing.text import Tokenizer
-    from keras.models import Model
-    import pandas as pd
-    import keras
 
     MAX_SEQUENCE_LENGTH = 90
     MAX_NB_WORDS = 100000
