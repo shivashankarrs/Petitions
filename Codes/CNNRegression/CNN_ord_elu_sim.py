@@ -11,49 +11,8 @@ from keras.preprocessing.text import Tokenizer
 from keras.models import Model
 import pandas as pd
 import keras   
+import os, pickle
 
-if sys.version_info < (3,):
-    maketrans = string.maketrans
-else:
-    maketrans = str.maketrans
-
-
-def base_filter():
-    f = string.punctuation
-    f = f.replace("'", '')
-    f += '\t\n'
-    return f
-
-def text_to_word_sequence(text,
-                          filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',
-                          lower=True, split=" "):
-    """Converts a text to a sequence of words (or tokens).
-    # Arguments
-        text: Input text (string).
-        filters: Sequence of characters to filter out.
-        lower: Whether to convert the input to lowercase.
-        split: Sentence split marker (string).
-    # Returns
-        A list of words (or tokens).
-    """
-    if lower:
-        text = text.lower()
-
-    if sys.version_info < (3,) and isinstance(text, unicode):
-        translate_map = dict((ord(c), unicode(split)) for c in filters)
-    else:
-        translate_map = maketrans(filters, split * len(filters))
-
-    text = text.translate(translate_map)
-    seq = text.split(split)
-    return [i for i in seq if i]
-
-
-def one_hot(text, n, filters=base_filter(), lower=True, split=" "):
-    seq = text_to_word_sequence(text, filters=filters, lower=lower, split=split)
-    return [(abs(hash(w)) % (n - 1) + 1) for w in seq]
-
-import os, numpy as np, pickle
 os.chdir("Petitions/") #Path to petitions
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "4"
@@ -65,11 +24,7 @@ modelname = "glovered.pickle"
 with open(modelname, 'rb') as handle:
         embeddings = pickle.load(handle)
 
-
-import pandas as pd
-
 #Petitions are sorted by date
-
 petitions = pd.read_csv("USPetitions_7K.csv", header=0)
 redpet = petitions[petitions['signs']<>'null']
 redpet['signs'] = redpet['signs'].astype('int')
@@ -84,7 +39,6 @@ testpetitions['fulltext'] = testpetitions['title'].astype('str')+' '+testpetitio
  
 
 from nltk import word_tokenize, sent_tokenize
-
 import math
 
 #encoding will change for UK, as there are 2 more classes (10, 100)
